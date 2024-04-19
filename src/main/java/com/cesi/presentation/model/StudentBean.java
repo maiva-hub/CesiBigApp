@@ -1,9 +1,12 @@
 package com.cesi.presentation.model;
+import com.cesi.business.logic.StudentServiceLocal;
 import jakarta.inject.Named;
 import jakarta.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import jakarta.faces.context.FacesContext;
 import jakarta.servlet.http.HttpSession;
+import jakarta.inject.Inject;
+
 
 /**
  *
@@ -14,19 +17,27 @@ import jakarta.servlet.http.HttpSession;
 public class StudentBean implements Serializable {
     private String firstname,lastname,email, password;
 
+    //injection du service
+    @Inject
+    private StudentServiceLocal studentService;
+
     //méthodes d'action
     public String addIdentity(){
         System.out.println(firstname+" "+lastname);
+        studentService.addStudent(firstname, lastname);
         return "authentication";
     }
 
     public String addAuthentication(){
         System.out.println(email+" "+password);
+        studentService.addAuthenticationInformations(email, password);
         return "summary";
     }
 
     public String create(){
         System.out.println("création de l'étudiant");
+        studentService.save();
+
         HttpSession session = (HttpSession)
                 FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         session.invalidate();
